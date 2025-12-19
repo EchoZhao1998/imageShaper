@@ -6,6 +6,6 @@ Upload an image → select shape → drag → export PNG.
 
 Supported devices: Desktop, iPhone, iPad.
 
-Live demo link: file:///Users/ez_us/Documents/imageShaper
+Live demo link: https://echozhao1998.github.io/imageShaper/
 
 Optional: Screenshot of the tool.
