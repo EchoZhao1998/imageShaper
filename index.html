@@ -47,14 +47,14 @@
                     // Image is wider than canvas
                     drawHeight = canvas.height;
                     drawWidth = img.width * (canvas.height / img.height);
-                    offsetX = -(drawWidth - canvas.width) / 2;
+                    offsetX = -(canvas.width- drawWidth) / 2;
                     offsetY = 0;
                 } else {
                     // Image is taller than canvas
                     drawWidth = canvas.width;
                     drawHeight = img.height * (canvas.width / img.width);
                     offsetX = 0;
-                    offsetY = -(drawHeight - canvas.height) / 2;
+                    offsetY = -(canvas.height - drawHeight) / 2;
                 }
 
             // draw image centered
