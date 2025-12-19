@@ -49,7 +49,26 @@
     canvas.width = Math.round(rect.width * dpr);
     canvas.height = Math.round(rect.height * dpr);
 
+    // Scale context for retina
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Only recalculate image draw sizes if img is loaded
+    if (img) {
+      const canvasRatio = rect.width / rect.height;
+      const imgRatio = img.width / img.height;
+
+      if (imgRatio > canvasRatio) {
+        drawHeight = rect.height;
+        drawWidth = img.width * (rect.height / img.height);
+        imgX = -(drawWidth - rect.width) / 2;
+        imgY = 0;
+      } else {
+        drawWidth = rect.width;
+        drawHeight = img.height * (rect.width / img.width);
+        imgX = 0;
+        imgY = -(drawHeight - rect.height) / 2;
+      }
+    }
 
     redraw();
   }
@@ -249,26 +268,7 @@
     img = new Image();
 
     img.onload = () => {
-      resizeCanvas();
-
-      const canvasRatio = canvas.width / canvas.height;
-      const imgRatio = img.width / img.height;
-
-      if (imgRatio > canvasRatio) {
-        // image is wider
-        drawHeight = canvas.height;
-        drawWidth = img.width * (canvas.height / img.height);
-        imgX = -(drawWidth - canvas.width) / 2;
-        imgY = 0;
-      } else {
-        // image is taller
-        drawWidth = canvas.width;
-        drawHeight = img.height * (canvas.width / img.width);
-        imgX = 0;
-        imgY = -(drawHeight - canvas.height) / 2;
-      }
-
-      redraw();
+      resizeCanvas(); // this will handle proper scaling and centering
     };
 
     img.src = URL.createObjectURL(file);
