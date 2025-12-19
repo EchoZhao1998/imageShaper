@@ -29,6 +29,65 @@
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
 
+        let imgX = 0;
+        let imgY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        canvas.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+
+            const dx = e.offsetX - startX;
+            const dy = e.offsetY - startY;
+
+            imgX += dx;
+            imgY += dy;
+
+            startX = e.offsetX;
+            startY = e.offsetY;
+
+            redraw();
+        });
+
+        canvas.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener("mouseleave", () => {
+            isDragging = false;
+        });
+
+        /* Centralized cropping logic */
+        function redraw() {
+            // This function will be called to redraw the image at new position
+            // after dragging. You can implement the logic to redraw the image
+            // based on imgX and imgY here.
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+
+            // masking to circle
+            ctx.beginPath();
+            ctx.arc(
+                canvas.width / 2,
+                canvas.height / 2,
+                canvas.width / 2,
+                0,
+                Math.PI * 2
+            );
+            /*ctx.closePath();*/
+            ctx.clip();
+            ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+            ctx.restore();
+        }
+
         upload.addEventListener("change", (e) => {
             const file = e.target.files[0];
             if (!file) return;
