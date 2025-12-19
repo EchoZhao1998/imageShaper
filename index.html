@@ -43,6 +43,9 @@
   let startX = 0;
   let startY = 0;
 
+  // shapes
+  let currentShape = "circle"; // future: "rounded-rect"
+
   canvas.addEventListener("mousedown", (e) => {
     if (!img) return;
     isDragging = true;
@@ -82,14 +85,21 @@
 
     // circle mask
     ctx.beginPath();
-    ctx.arc(
-      canvas.width / 2,
-      canvas.height / 2,
-      canvas.width / 2,
-      0,
-      Math.PI * 2
-    );
+
+    if (currentShape === "circle") {
+        ctx.arc(
+            canvas.width / 2,
+            canvas.height / 2,
+            canvas.width / 2,
+            0,
+            Math.PI * 2
+      );
+    }
+
     ctx.clip();
+}
+
+ctx.clip();
 
     ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
 
