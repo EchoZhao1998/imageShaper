@@ -29,11 +29,15 @@
 
 <canvas id="canvas" width="400" height="400"></canvas>
 
+<!-- Export button -->
+<button id="exportBtn">Export PNG </button>
+
 <script>
   const upload = document.getElementById("upload");
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const shapeSelect = document.getElementById("shapeSelect");
+  const exportBtn = document.getElementById("exportBtn");
 
   let img = null;
 
@@ -146,6 +150,65 @@
     ctx.restore();
     }
 
+    // Export button functionality
+    function exportTransparentPNG() {
+        if (!img) return;
+
+        // Create an offscreen canvas (same size as main canvas)
+        const exportCanvas = document.createElement("canvas");
+        exportCanvas.width = canvas.width;
+        exportCanvas.height = canvas.height;
+
+        const exportCtx = exportCanvas.getContext("2d");
+        // IMPORTANT:
+        // Do NOT fill background.
+        // Canvas defaults to transparent.
+
+        exportCtx.save();
+        exportCtx.beginPath();
+
+        if (currentShape === "circle") {
+            exportCtx.arc(
+            exportCanvas.width / 2,
+            exportCanvas.height / 2,
+            exportCanvas.width / 2,
+            0,
+            Math.PI * 2
+        );
+        }
+
+        if (currentShape === "rounded-rect") {
+            const padding = 0;
+            const radius = 40;
+
+            // Reuse same geometry logic
+            drawRoundedRectPath.call(
+                { },
+                padding,
+                padding,
+                exportCanvas.width - padding * 2,
+                exportCanvas.height - padding * 2,
+                radius
+            );
+        }
+
+        exportCtx.clip();
+
+        // Draw the image using the SAME transform values
+        exportCtx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+
+        exportCtx.restore();
+
+        // Convert to PNG
+        const pngURL = exportCanvas.toDataURL("image/png");
+
+        // Trigger download
+        const link = document.createElement("a");
+        link.href = pngURL;
+        link.download = "cropped-image.png";
+        link.click();
+      }
+
   upload.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -175,6 +238,8 @@
 
     img.src = URL.createObjectURL(file);
   });
+
+    exportBtn.addEventListener("click", exportTransparentPNG);
 </script>
 
 </body>
