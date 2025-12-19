@@ -44,7 +44,7 @@
   let startY = 0;
 
   // shapes
-  let currentShape = "circle"; // future: "rounded-rect"
+  let currentShape = "rounded-rect"; 
 
   canvas.addEventListener("mousedown", (e) => {
     if (!img) return;
@@ -64,6 +64,23 @@
 
     startX = e.offsetX;
     startY = e.offsetY;
+
+    /* conditions for round rectangle */
+    function drawRoundedRectPath(x, y, width, height, radius) {
+        const r = Math.min(radius, width / 2, height / 2);
+
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + width - r, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+
+        ctx.lineTo(x + width, y + height - r);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        ctx.lineTo(x + r, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        }
 
     redraw();
   });
@@ -93,9 +110,22 @@
         canvas.width / 2,
         0,
         Math.PI * 2
-    );
+        );
+    }
 
-}
+
+    if (currentShape === "rounded-rect") {
+        const padding = 0;
+        const radius = 40;
+
+        drawRoundedRectPath(
+            padding,
+            padding,
+            canvas.width - padding * 2,
+            canvas.height - padding * 2,
+            radius
+        );
+    }
 
     ctx.clip();
     ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
