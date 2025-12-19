@@ -12,7 +12,11 @@
       border: 1px solid #ccc;
       display: block;
       margin-top: 10px;
-      touch-action: none; /* REQUIRED for mobile drag */
+      width: 90vw;
+      max-width: 420px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      touch-action: none;
     }
   </style>
 </head>
@@ -37,6 +41,21 @@
   const upload = document.getElementById("upload");
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    redraw();
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+
   const shapeSelect = document.getElementById("shapeSelect");
   const exportBtn = document.getElementById("exportBtn");
 
@@ -58,6 +77,8 @@
 
   // shapes
   let currentShape = "circle"; // default shape
+
+  resizeCanvas();
 
   // e.target.value to "circle" or "rounded-rect"
   // Updates your single source of truth: currentShape
@@ -228,6 +249,8 @@
     img = new Image();
 
     img.onload = () => {
+      resizeCanvas();
+
       const canvasRatio = canvas.width / canvas.height;
       const imgRatio = img.width / img.height;
 
