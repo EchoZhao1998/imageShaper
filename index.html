@@ -210,23 +210,25 @@
       if (!img) return;
 
       // Create an offscreen canvas (same size as main canvas)
+      const rect = canvas.getBoundingClientRect();
       const exportCanvas = document.createElement("canvas");
-      exportCanvas.width = canvas.width;
-      exportCanvas.height = canvas.height;
+      exportCanvas.width = rect.width;
+      exportCanvas.height = rect.height;
 
       const exportCtx = exportCanvas.getContext("2d");
+
       // IMPORTANT:
       // Do NOT fill background.
       // Canvas defaults to transparent.
-
+      //clip to shape
       exportCtx.save();
       exportCtx.beginPath();
 
       if (currentShape === "circle") {
           exportCtx.arc(
-          exportCanvas.width / 2,
-          exportCanvas.height / 2,
-          exportCanvas.width / 2,
+          rect.width / 2,
+          rect.height / 2,
+          rect.width / 2,
           0,
           Math.PI * 2
       );
@@ -241,8 +243,8 @@
             exportCtx,
             padding,
             padding,
-            exportCanvas.width - padding * 2,
-            exportCanvas.height - padding * 2,
+            rect.width - padding * 2,
+            rect.height - padding * 2,
             radius
           );
       }
