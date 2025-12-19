@@ -46,13 +46,14 @@
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
 
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
+    // Set physical canvas size
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
 
-    // Scale context for retina
+    // Scale context so all drawing uses logical pixels
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Only recalculate image draw sizes if img is loaded
+    // Only recalc image position/size if image loaded
     if (img) {
       const canvasRatio = rect.width / rect.height;
       const imgRatio = img.width / img.height;
@@ -165,101 +166,103 @@
   function redraw() {
     if (!img) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const rect = canvas.getBoundingClientRect();
+
+    ctx.clearRect(0, 0, rect.width, rect.height);
 
     ctx.save();
 
-    // circle mask
     ctx.beginPath();
 
     if (currentShape === "circle") {
-    ctx.arc(
-        canvas.width / 2,
-        canvas.height / 2,
-        canvas.width / 2,
+      ctx.arc(
+        rect.width / 2,
+        rect.height / 2,
+        rect.width / 2,
         0,
         Math.PI * 2
-        );
+      );
     }
 
-
     if (currentShape === "rounded-rect") {
-        const padding = 0;
-        const radius = 40;
+      const padding = 0;
+      const radius = 40;
 
-        drawRoundedRectPath(
-          ctx,
-          padding,
-          padding,
-          canvas.width - padding * 2,
-          canvas.height - padding * 2,
-          radius
-        );
+      drawRoundedRectPath(
+        ctx,
+        padding,
+        padding,
+        rect.width - padding * 2,
+        rect.height - padding * 2,
+        radius
+      );
     }
 
     ctx.clip();
+
     ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+
     ctx.restore();
-    }
+  }
 
-    // Export button functionality
-    function exportTransparentPNG() {
-        if (!img) return;
+  // Export button functionality
+  function exportTransparentPNG() {
+      if (!img) return;
 
-        // Create an offscreen canvas (same size as main canvas)
-        const exportCanvas = document.createElement("canvas");
-        exportCanvas.width = canvas.width;
-        exportCanvas.height = canvas.height;
+      // Create an offscreen canvas (same size as main canvas)
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = canvas.width;
+      exportCanvas.height = canvas.height;
 
-        const exportCtx = exportCanvas.getContext("2d");
-        // IMPORTANT:
-        // Do NOT fill background.
-        // Canvas defaults to transparent.
+      const exportCtx = exportCanvas.getContext("2d");
+      // IMPORTANT:
+      // Do NOT fill background.
+      // Canvas defaults to transparent.
 
-        exportCtx.save();
-        exportCtx.beginPath();
+      exportCtx.save();
+      exportCtx.beginPath();
 
-        if (currentShape === "circle") {
-            exportCtx.arc(
-            exportCanvas.width / 2,
-            exportCanvas.height / 2,
-            exportCanvas.width / 2,
-            0,
-            Math.PI * 2
-        );
-        }
-
-        if (currentShape === "rounded-rect") {
-            const padding = 0;
-            const radius = 40;
-
-            // Reuse same geometry logic
-            drawRoundedRectPath(
-              exportCtx,
-              padding,
-              padding,
-              exportCanvas.width - padding * 2,
-              exportCanvas.height - padding * 2,
-              radius
-            );
-        }
-
-        exportCtx.clip();
-
-        // Draw the image using the SAME transform values
-        exportCtx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
-
-        exportCtx.restore();
-
-        // Convert to PNG
-        const pngURL = exportCanvas.toDataURL("image/png");
-
-        // Trigger download
-        const link = document.createElement("a");
-        link.href = pngURL;
-        link.download = "cropped-image.png";
-        link.click();
+      if (currentShape === "circle") {
+          exportCtx.arc(
+          exportCanvas.width / 2,
+          exportCanvas.height / 2,
+          exportCanvas.width / 2,
+          0,
+          Math.PI * 2
+      );
       }
+
+      if (currentShape === "rounded-rect") {
+          const padding = 0;
+          const radius = 40;
+
+          // Reuse same geometry logic
+          drawRoundedRectPath(
+            exportCtx,
+            padding,
+            padding,
+            exportCanvas.width - padding * 2,
+            exportCanvas.height - padding * 2,
+            radius
+          );
+      }
+
+      exportCtx.clip();
+
+      // Draw the image using the SAME transform values
+      exportCtx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+
+      exportCtx.restore();
+
+      // Convert to PNG
+      const pngURL = exportCanvas.toDataURL("image/png");
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.href = pngURL;
+      link.download = "cropped-image.png";
+      link.click();
+    }
 
   upload.addEventListener("change", (e) => {
     const file = e.target.files[0];
