@@ -12,6 +12,7 @@
       border: 1px solid #ccc;
       display: block;
       margin-top: 10px;
+      touch-action: none; /* REQUIRED for mobile drag */
     }
   </style>
 </head>
@@ -49,8 +50,9 @@
   let drawWidth = 0;
   let drawHeight = 0;
 
-  // dragging state
+  // dragging state (Pointer Events)
   let isDragging = false;
+  let activePointerId = null;
   let startX = 0;
   let startY = 0;
 
@@ -66,14 +68,19 @@
   });
 
   canvas.addEventListener("pointerdown", (e) => {
-    if (!img) return;
+    if (!img || isDragging) return;
+
     isDragging = true;
+    activePointerId = e.pointerId;
+
     startX = e.offsetX;
     startY = e.offsetY;
+
+    canvas.setPointerCapture(activePointerId);
   });
 
   canvas.addEventListener("pointermove", (e) => {
-    if (!isDragging || !img) return;
+    if (!isDragging || e.pointerId !== activePointerId || !img) return;
 
     const dx = e.offsetX - startX;
     const dy = e.offsetY - startY;
@@ -87,13 +94,17 @@
     redraw();
   });
 
-  canvas.addEventListener("pointerup", () => {
-    isDragging = false;
-  });
+  function endPointerDrag(e) {
+    if (e.pointerId !== activePointerId) return;
 
-  canvas.addEventListener("pointercancel", () => {
     isDragging = false;
-  });
+    activePointerId = null;
+
+    canvas.releasePointerCapture(e.pointerId);
+  }
+
+  canvas.addEventListener("pointerup", endPointerDrag);
+  canvas.addEventListener("pointercancel", endPointerDrag);
 
   function drawRoundedRectPath(ctxRef, x, y, width, height, radius) {
     const r = Math.min(radius, width / 2, height / 2);
