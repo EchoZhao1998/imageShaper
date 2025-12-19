@@ -75,7 +75,7 @@
             // after dragging. You can implement the logic to redraw the image
             // based on imgX and imgY here.
             if (!img) return;
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.save();
@@ -125,9 +125,11 @@
                 }
 
                 redraw();
+            };
 
                 img.src = URL.createObjectURL(file);
-/*
+            });
+            /*
             // draw image centered
                 ctx.save();
 
@@ -149,7 +151,7 @@
 
             img.src = URL.createObjectURL(file);
         });*/
-  </script>
+    </script>
 
 </body>
 </html>
