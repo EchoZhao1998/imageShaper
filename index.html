@@ -21,12 +21,19 @@
 
 <input type="file" id="upload" accept="image/*" />
 
+<label for="shapeSelect">Select shape:</label>
+<select id="shapeSelect">
+  <option value="circle">Circle</option>
+  <option value="rounded-rect">Rounded Rectangle</option>
+</select>
+
 <canvas id="canvas" width="400" height="400"></canvas>
 
 <script>
   const upload = document.getElementById("upload");
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
+  const shapeSelect = document.getElementById("shapeSelect");
 
   let img = null;
 
@@ -44,7 +51,15 @@
   let startY = 0;
 
   // shapes
-  let currentShape = "rounded-rect"; 
+  let currentShape = "circle"; // default shape
+
+  // e.target.value to "circle" or "rounded-rect"
+  // Updates your single source of truth: currentShape
+  // Calls redraw() to re-render with the new mask
+  shapeSelect.addEventListener("change", (e) => {
+    currentShape = e.target.value;
+    redraw();
+  });
 
   canvas.addEventListener("mousedown", (e) => {
     if (!img) return;
