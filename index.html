@@ -95,20 +95,20 @@
     isDragging = false;
   });
 
-  function drawRoundedRectPath(x, y, width, height, radius) {
+  function drawRoundedRectPath(ctxRef, x, y, width, height, radius) {
     const r = Math.min(radius, width / 2, height / 2);
 
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + width - r, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctxRef.moveTo(x + r, y);
+    ctxRef.lineTo(x + width - r, y);
+    ctxRef.quadraticCurveTo(x + width, y, x + width, y + r);
 
-    ctx.lineTo(x + width, y + height - r);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
-    ctx.lineTo(x + r, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+    ctxRef.lineTo(x + width, y + height - r);
+    ctxRef.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctxRef.lineTo(x + r, y + height);
+    ctxRef.quadraticCurveTo(x, y + height, x, y + height - r);
 
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctxRef.lineTo(x, y + r);
+    ctxRef.quadraticCurveTo(x, y, x + r, y);
   }
 
   function redraw() {
@@ -137,11 +137,12 @@
         const radius = 40;
 
         drawRoundedRectPath(
-            padding,
-            padding,
-            canvas.width - padding * 2,
-            canvas.height - padding * 2,
-            radius
+          ctx,
+          padding,
+          padding,
+          canvas.width - padding * 2,
+          canvas.height - padding * 2,
+          radius
         );
     }
 
@@ -182,13 +183,13 @@
             const radius = 40;
 
             // Reuse same geometry logic
-            drawRoundedRectPath.call(
-                { },
-                padding,
-                padding,
-                exportCanvas.width - padding * 2,
-                exportCanvas.height - padding * 2,
-                radius
+            drawRoundedRectPath(
+              exportCtx,
+              padding,
+              padding,
+              exportCanvas.width - padding * 2,
+              exportCanvas.height - padding * 2,
+              radius
             );
         }
 
