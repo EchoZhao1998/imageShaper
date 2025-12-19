@@ -87,23 +87,20 @@
     ctx.beginPath();
 
     if (currentShape === "circle") {
-        ctx.arc(
-            canvas.width / 2,
-            canvas.height / 2,
-            canvas.width / 2,
-            0,
-            Math.PI * 2
-      );
-    }
+    ctx.arc(
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width / 2,
+        0,
+        Math.PI * 2
+    );
 
-    ctx.clip();
 }
 
-ctx.clip();
-
+    ctx.clip();
     ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
-
     ctx.restore();
+    }
 
   upload.addEventListener("change", (e) => {
     const file = e.target.files[0];
