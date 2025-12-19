@@ -35,6 +35,11 @@
         let startX = 0;
         let startY = 0;
 
+        let img = null;
+        let drawWidth = 0;
+        let drawHeight = 0;
+
+
         canvas.addEventListener("mousedown", (e) => {
             isDragging = true;
             startX = e.offsetX;
@@ -69,6 +74,8 @@
             // This function will be called to redraw the image at new position
             // after dragging. You can implement the logic to redraw the image
             // based on imgX and imgY here.
+            if (!img) return;
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.save();
@@ -92,7 +99,8 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            const img = new Image();
+            img = new Image();
+
             img.onload = () => {
             // clear canvas
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -106,16 +114,20 @@
                     // Image is wider than canvas
                     drawHeight = canvas.height;
                     drawWidth = img.width * (canvas.height / img.height);
-                    offsetX = -(canvas.width- drawWidth) / 2;
-                    offsetY = 0;
+                    imgX = -(canvas.width- drawWidth) / 2;
+                    imgY = 0;
                 } else {
                     // Image is taller than canvas
                     drawWidth = canvas.width;
                     drawHeight = img.height * (canvas.width / img.width);
-                    offsetX = 0;
-                    offsetY = -(canvas.height - drawHeight) / 2;
+                    imgX = 0;
+                    imgY = -(canvas.height - drawHeight) / 2;
                 }
 
+                redraw();
+
+                img.src = URL.createObjectURL(file);
+/*
             // draw image centered
                 ctx.save();
 
@@ -136,7 +148,7 @@
             };
 
             img.src = URL.createObjectURL(file);
-        });
+        });*/
   </script>
 
 </body>
