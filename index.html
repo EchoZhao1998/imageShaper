@@ -53,11 +53,11 @@
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  const zoomRange = document.getElementById("zoomRange");
-
   let scale = 1;
   const MIN_SCALE = 0.5;
   const MAX_SCALE = 3;
+
+  const zoomRange = document.getElementById("zoomRange");
   
   zoomRange.addEventListener("input", (e) => {
   scale = parseFloat(e.target.value);
@@ -222,7 +222,15 @@
 
     ctx.clip();
 
-    ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+    // ctx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+    const zoomedWidth = drawWidth * scale;
+    const zoomedHeight = drawHeight * scale;
+
+// Keep image centered relative to zoom
+    const offsetX = imgX - (zoomedWidth - drawWidth) / 2;
+    const offsetY = imgY - (zoomedHeight - drawHeight) / 2;
+
+    ctx.drawImage(img, offsetX, offsetY, zoomedWidth, zoomedHeight);
 
     ctx.restore();
   }
@@ -273,8 +281,15 @@
 
       exportCtx.clip();
 
-      // Draw the image using the SAME transform values
-      exportCtx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+      // Draw the image using the SAME transform values ()
+      // exportCtx.drawImage(img, imgX, imgY, drawWidth, drawHeight);
+      const zoomedWidth = drawWidth * scale;
+      const zoomedHeight = drawHeight * scale;
+
+      const offsetX = imgX - (zoomedWidth - drawWidth) / 2;
+      const offsetY = imgY - (zoomedHeight - drawHeight) / 2;
+
+      exportCtx.drawImage(img, offsetX, offsetY, zoomedWidth, zoomedHeight);
 
       exportCtx.restore();
 
@@ -295,6 +310,8 @@
     img = new Image();
 
     img.onload = () => {
+      scale = 1;
+      zoomRange.value = 1;
       resizeCanvas(); // this will handle proper scaling and centering
     };
 
