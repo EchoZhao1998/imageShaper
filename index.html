@@ -52,16 +52,17 @@
   const upload = document.getElementById("upload");
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
-  
 
+   let scale = 1;
+  const MIN_SCALE = 0.5;
+  const MAX_SCALE = 3;
+  
   zoomRange.addEventListener("input", (e) => {
   scale = parseFloat(e.target.value);
   redraw();
   });
 
-  let scale = 1;
-  const MIN_SCALE = 0.5;
-  const MAX_SCALE = 3;
+ 
 
   const zoomRange = document.getElementById("zoomRange");
 
