@@ -60,8 +60,11 @@
   const zoomRange = document.getElementById("zoomRange");
   
   zoomRange.addEventListener("input", (e) => {
-  scale = parseFloat(e.target.value);
-  redraw();
+    scale = Math.min(
+      MAX_SCALE,
+      Math.max(MIN_SCALE, parseFloat(e.target.value))
+    );
+    redraw();
   });
 
   function resizeCanvas() {
